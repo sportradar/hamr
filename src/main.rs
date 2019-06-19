@@ -1,4 +1,5 @@
 mod shellout;
+mod note;
 
 use structopt::StructOpt;
 use failure::ResultExt;
