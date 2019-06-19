@@ -1,10 +1,12 @@
 mod shellout;
 mod note;
+mod repo;
 
 use structopt::StructOpt;
 use failure::ResultExt;
 use exitfailure::ExitFailure;
 use std::path::PathBuf;
+use std::io::Write;
 
 #[derive(StructOpt)]
 #[structopt(name = "hamr", rename_all = "kebab-case",
@@ -22,6 +24,10 @@ enum Hamr {
         /// Add the environment variables to be uploaded
         #[structopt(long = "env", short = "e")]
         env_variables: Vec<String>,
+    },
+    #[structopt(name = "load", about = "Load files and environment variables from LastPass")]
+    Load {
+
     },
 }
 
@@ -42,6 +48,29 @@ fn main() {
                 println!("Environment variable {}", var)
             }
             // TODO: call shellout method for saving of note
+        },
+        Hamr::Load {} => {
+            let repo_name = repo::get_origin().expect("Could not find .git/origin (are you in repo root?)");
+            let entry = match shellout::find_note(&repo_name).expect("Search for note failed.") {
+                Some(entry) => entry,
+                None => {
+                    println!("No note exist for this repository (Looked for {:?}).", shellout::note_name(&repo_name));
+                    std::process::exit(1);
+                },
+            };
+
+            let note = entry.load().expect("Failed to load entry.");
+            let note = serde_json::from_str::<note::Note>(&note).expect("Failed to parse note.");
+
+            for config_file in note.config_files.iter() {
+                if config_file.path.is_file() {
+                    println!("{} - already exists, skipping. (delete it and run this again to overwrite)", config_file.path.to_str().unwrap());
+                    continue;
+                }
+
+                let mut file = std::fs::File::create(&config_file.path).expect("Could not open file");
+                file.write_all(config_file.secrets.join("\n").as_bytes()).expect("Could not write to file");
+            }
         }
     }
 }

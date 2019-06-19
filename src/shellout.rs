@@ -161,6 +161,12 @@ pub struct LSEntry {
 }
 
 impl LSEntry {
+    pub fn load(&self) -> Result<String, LPassError> {
+        let id = self.id.to_string();
+
+        load_data(&id)
+    }
+
     pub fn overwrite(&self, data: &str) -> Result<(), LPassError> {
         let id = self.id.to_string();
 
