@@ -3,7 +3,8 @@ name = "hamr"
 version = "0.1.0"
 authors = [
 "Emil Orvik Kollstrøm <e.kollstrom@gmail.com>",
-"Ruben Svanåsbakken Sevaldson <r.sevaldson@gmail.com>"
+"Ruben Svanåsbakken Sevaldson <r.sevaldson@gmail.com>",
+"Gisle Martin Aune <dev@gisle.me>"
 ]
 edition = "2018"
 
