@@ -13,3 +13,5 @@ colored = "1.8" # Colors in the terminal
 structopt = "0.2.10" # Parsing command line arguments
 failure = "0.1.5" # Wrap an error and contain the original one
 exitfailure = "0.5.1" # Make error types readable
+serde = { version = "1.0", features = ["derive"] } # Serialization
+serde_json = "1.0"
