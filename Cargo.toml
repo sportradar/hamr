@@ -1,7 +1,10 @@
 [package]
 name = "hamr"
 version = "0.1.0"
-authors = ["Emil Orvik Kollstrøm <e.kollstrom@gmail.com>"]
+authors = [
+"Emil Orvik Kollstrøm <e.kollstrom@gmail.com>",
+"Ruben Svanåsbakken Sevaldson <r.sevaldson@gmail.com>"
+]
 edition = "2018"
 
 [dependencies]
