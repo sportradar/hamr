@@ -128,11 +128,44 @@ pub fn ls() -> Result<Vec<LSEntry>, LPassError> {
     Ok(result)
 }
 
+pub fn find_note(repo: &str) -> Result<Option<LSEntry>, LPassError> {
+    let target = note_name(repo);
+    let list = ls()?;
+
+    Ok(list.into_iter().filter(|e| e.name == target).next())
+}
+
+/// Don't think too hard about what goes on in this function.
+pub fn note_name(repo: &str) -> String {
+    let mut repo: String = repo.replace("git+ssh://", "")
+                               .replace("https://", "")
+                               .replace("/", " ")
+                               .replace(":", " ")
+                               .split('@')
+                               .last()
+                               .unwrap_or("")
+                               .to_owned();
+
+    if repo.ends_with(".git") {
+        repo.drain(repo.len() - 4..);
+    }
+
+    format!("Hamr - {}", repo)
+}
+
 #[derive(Debug)]
 pub struct LSEntry {
     pub id: u64,
     pub name: String,
     pub folders: Vec<String>,
+}
+
+impl LSEntry {
+    pub fn overwrite(&self, data: &str) -> Result<(), LPassError> {
+        let id = self.id.to_string();
+
+        save_data(&id, data)
+    }
 }
 
 #[derive(Debug)]
@@ -155,4 +188,14 @@ impl fmt::Display for LPassError {
             write!(f, "(LPass) {}", self.msg)
         }
     }
+}
+
+#[test]
+fn test_note_name() {
+    assert_eq!(note_name("https://github.com/gissleh/ngn4"), "Hamr - github.com gissleh ngn4");
+    assert_eq!(note_name("https://github.com/gissleh/ngn4.git"), "Hamr - github.com gissleh ngn4");
+    assert_eq!(note_name("git+ssh://github.com/gissleh/ngn4.git"), "Hamr - github.com gissleh ngn4");
+    assert_eq!(note_name("git@github.com:gissleh/ngn4.git"), "Hamr - github.com gissleh ngn4");
+    assert_eq!(note_name("github.com:gissleh/ngn4"), "Hamr - github.com gissleh ngn4");
+    assert_eq!(note_name("git@gitlab.sportradar.ag:streaming/vt-monitor.git"), "Hamr - gitlab.sportradar.ag streaming vt-monitor");
 }
