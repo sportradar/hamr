@@ -15,4 +15,10 @@ enum Hamr {
 
 fn main() {
     let args = Hamr::from_args();
+
+    match args {
+        Hamr::Login {username} => {
+            shellout::login(&username).expect("Could not login using lpass");
+        }
+    }
 }
