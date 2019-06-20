@@ -1,6 +1,7 @@
 mod shellout;
 mod note;
 mod repo;
+mod loader;
 
 use structopt::StructOpt;
 use failure::ResultExt;
@@ -29,6 +30,13 @@ enum Hamr {
     Load {
 
     },
+    Clone {
+        /// The repository to download.
+        repository: String,
+
+        /// A folder to put the content in.
+        folder: Option<String>,
+    }
 }
 
 fn main() {
@@ -55,27 +63,26 @@ fn main() {
                 },
             };
 
-            let work_dir = std::env::current_dir().expect("No current dir found?");
+            loader::load(&entry, None);
+        }
+        Hamr::Clone {repository, folder} => {
+            let entry = match shellout::find_note(&repository).expect("Search for note failed.") {
+                Some(entry) => entry,
+                None => {
+                    println!("No note exist for this repository, use git clone instead if that's expected (Looked for {:?}).", shellout::note_name(&repository));
+                    std::process::exit(1);
+                },
+            };
 
-            let note = entry.load().expect("Failed to load entry.");
-            let note = serde_json::from_str::<note::Note>(&note).expect("Failed to parse note.");
-
-            for config_file in note.config_files.iter() {
-                if config_file.path.is_absolute() {
-                    println!("{} - is an absolute path, skipping.", config_file.path.to_str().unwrap());
-                    continue;
+            let path = match repo::git_clone(&repository, &folder) {
+                Ok(path) => path,
+                Err(err) => {
+                    println!("Could not run git clone: {}", err);
+                    std::process::exit(1);
                 }
+            };
 
-                if config_file.path.is_file() {
-                    println!("{} - already exists, skipping. (delete it and run this again to overwrite)", config_file.path.to_str().unwrap());
-                    continue;
-                }
-
-                let mut file = std::fs::File::create(work_dir.join(&config_file.path)).expect("Could not open file");
-                file.write_all(config_file.secrets.join("\n").as_bytes()).expect("Could not write to file");
-
-                println!("{} - successfully loaded", config_file.path.to_str().unwrap());
-            }
+            loader::load(&entry, Some(path));
         }
     }
 }
