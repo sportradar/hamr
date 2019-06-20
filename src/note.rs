@@ -2,16 +2,16 @@ use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Note {
-    pub repository: String,
-    pub config_files: Vec<ConfigFile>,
-    pub env_variables: std::collections::HashMap<String, String>,
+struct Note {
+    repository: String,
+    config_files: Vec<ConfigFile>,
+    env_variables: std::collections::HashMap<String, String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct ConfigFile {
-    pub path: std::path::PathBuf,
-    pub secrets: Vec<String>,
+struct ConfigFile {
+    path: std::path::PathBuf,
+    secrets: Vec<String>,
 }
 
 #[test]
