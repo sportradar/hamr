@@ -80,10 +80,6 @@ fn main() {
 
                 println!("{} - successfully loaded", config_file.path.to_str().unwrap());
             }
-            let note = note::Note::from(files, env_variables);
-            shellout::save_data(
-                repo::get_origin().unwrap().as_str(),
-                serde_json::to_string(&note).unwrap().as_str()).expect("Could not save note")
         }
     }
 }
