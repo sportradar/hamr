@@ -1,6 +1,9 @@
 use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
 use std::path::PathBuf;
+use std::fs::File;
+use std::io::{Read, BufReader, BufRead};
+use core::borrow::{BorrowMut, Borrow};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Note {
@@ -27,18 +30,52 @@ impl Note {
     }
 }
 
+impl PartialEq for ConfigFile {
+    fn eq(&self, other: &Self) -> bool {
+        self.path == other.path &&
+            self.secrets == other.secrets
+    }
+}
+
 fn parse_files(paths: Vec<PathBuf>) -> Vec<ConfigFile> {
-    // TODO: iterate through files and add its content to config file struct
-    Vec::new()
+    let mut configs = Vec::new();
+    for p in paths.iter() {
+        let file = File::open(p).unwrap();
+        let reader = BufReader::new(file);
+        let mut lines = Vec::new();
+        for line in reader.lines() {
+            let s = line.unwrap();
+            lines.push(s);
+        }
+        let config = ConfigFile { path: PathBuf::from(p), secrets: lines };
+        configs.push(config);
+    }
+    return configs;
 }
 
 fn parse_env_vars(vars: Vec<String>) -> std::collections::HashMap<String, String> {
-    let mut env_vars= HashMap::new();
+    let mut env_vars = HashMap::new();
     for vars in vars.iter() {
         let split = vars.split("=").collect::<Vec<&str>>();
         env_vars.insert(String::from(split[0]), String::from(split[1]));
     }
-    return env_vars
+    return env_vars;
+}
+
+#[test]
+fn read_file() {
+    let expected = vec![
+        ConfigFile {
+            path: PathBuf::from("/home/kollstrom/Programming/personal/hamr/README.md"),
+            secrets: vec![
+                String::from("# hamr"),
+                String::from("The build tool that let's you create, share and import secrets with your Git repositories easily via LastPass.")
+            ],
+        }
+    ];
+    let parsed =
+        parse_files(vec![PathBuf::from("/home/kollstrom/Programming/personal/hamr/README.md")]);
+    assert_eq!(parsed, expected);
 }
 
 #[test]
