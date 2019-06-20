@@ -4,14 +4,14 @@ use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Note {
-    config_files: Vec<ConfigFile>,
-    env_variables: std::collections::HashMap<String, String>,
+    pub config_files: Vec<ConfigFile>,
+    pub env_variables: std::collections::HashMap<String, String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-struct ConfigFile {
-    path: std::path::PathBuf,
-    secrets: Vec<String>,
+pub struct ConfigFile {
+    pub path: std::path::PathBuf,
+    pub secrets: Vec<String>,
 }
 
 impl Note {
