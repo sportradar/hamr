@@ -31,6 +31,7 @@ enum Hamr {
     Load {
 
     },
+    #[structopt(name = "clone", about = "Clones repo and adds files shared with you")]
     Clone {
         /// The repository to download.
         repository: String,
@@ -38,7 +39,7 @@ enum Hamr {
         /// A folder to put the content in.
         folder: Option<String>,
     },
-    #[structopt(name = "time", about = "Load and output binary configuration file")]
+    #[structopt(name = "time", about = "MC Hammer")]
     Time {
 
     }
