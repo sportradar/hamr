@@ -42,8 +42,8 @@ fn main() {
             let note = note::Note::from(files, env_variables);
             shellout::save_data(
                 repo::get_origin().unwrap().as_str(),
-                serde_json::to_string(&note).unwrap().as_str()).expect("Could not save note")
-            );
+                serde_json::to_string(&note).unwrap().as_str(),
+            ).expect("Could not save note");
         },
         Hamr::Load {} => {
             let repo_name = repo::get_origin().expect("Could not find .git/origin (are you in repo root?)");
