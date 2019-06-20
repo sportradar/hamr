@@ -33,7 +33,6 @@ fn parse_files(paths: Vec<PathBuf>) -> Vec<ConfigFile> {
 }
 
 fn parse_env_vars(vars: Vec<String>) -> std::collections::HashMap<String, String> {
-    // TODO: split key and value on '=' and add to hashmap
     let mut env_vars= HashMap::new();
     for vars in vars.iter() {
         let split = vars.split("=").collect::<Vec<&str>>();
@@ -45,8 +44,8 @@ fn parse_env_vars(vars: Vec<String>) -> std::collections::HashMap<String, String
 #[test]
 fn split_vars() {
     let mut expected = HashMap::new();
-    expected.insert("DB_USER", "admin");
-    expected.insert("DB_PASSWORD", "scrt");
+    expected.insert(String::from("DB_USER"), String::from("admin"));
+    expected.insert(String::from("DB_PASSWORD"), String::from("scrt"));
     let result = parse_env_vars(vec![String::from("DB_USER=admin"), String::from("DB_PASSWORD=scrt")]);
     assert_eq!(result, expected)
 }
