@@ -2,6 +2,7 @@ mod shellout;
 mod note;
 mod repo;
 mod loader;
+mod time;
 
 use structopt::StructOpt;
 use failure::ResultExt;
@@ -36,6 +37,10 @@ enum Hamr {
 
         /// A folder to put the content in.
         folder: Option<String>,
+    },
+    #[structopt(name = "time", about = "Load and output binary configuration file")]
+    Time {
+
     }
 }
 
@@ -64,7 +69,7 @@ fn main() {
             };
 
             loader::load(&entry, None);
-        }
+        },
         Hamr::Clone {repository, folder} => {
             let entry = match shellout::find_note(&repository).expect("Search for note failed.") {
                 Some(entry) => entry,
@@ -83,6 +88,9 @@ fn main() {
             };
 
             loader::load(&entry, Some(path));
+        }
+        Hamr::Time {} => {
+            time::run("time.wav").expect(":(");
         }
     }
 }
