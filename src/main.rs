@@ -39,15 +39,11 @@ fn main() {
             shellout::login(&username).expect("Could not login using lpass");
         }
         Hamr::Save { files, env_variables } => {
-            for file in files.iter() {
-                // TODO: Add file to Note
-                println!("Filename {:?}", file.to_str())
-            }
-            for var in env_variables.iter() {
-                // TODO: Add vars to Note instance
-                println!("Environment variable {}", var)
-            }
-            // TODO: call shellout method for saving of note
+            let note = note::Note::from(files, env_variables);
+            shellout::save_data(
+                repo::get_origin().unwrap().as_str(),
+                serde_json::to_string(&note).unwrap().as_str()).expect("Could not save note")
+            );
         },
         Hamr::Load {} => {
             let repo_name = repo::get_origin().expect("Could not find .git/origin (are you in repo root?)");
