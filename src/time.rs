@@ -8,5 +8,5 @@ fn exec_ffplay(args: &[&str]) -> Result<(), String> {
 }
 
 pub fn run(file: &str) -> Result<(), String> {
-    exec_ffplay(&["-hide_banner", "-loglevel", "warning", "-nodisp", file])
+    exec_ffplay(&["-hide_banner", "-loglevel", "warning", "-nodisp", "-autoexit", file])
 }
