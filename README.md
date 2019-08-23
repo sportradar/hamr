@@ -1,5 +1,5 @@
-![hamr](https://raw.githubusercontent.com/sportradar/hamr/how-to/hamr-logo.png)
-## The build tool that let's you create, share and import secrets with your Git repositories easily via LastPass.
+![hamr](https://raw.githubusercontent.com/sportradar/hamr/master/hamr-logo.png)
+## The CLI tool that lets you create, share and import secrets with your Git repositories easily via LastPass.
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
 
