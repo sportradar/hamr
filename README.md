@@ -1,6 +1,6 @@
 ![hamr](https://raw.githubusercontent.com/sportradar/hamr/how-to/hamr-logo.png)
-# hamr
-The build tool that let's you create, share and import secrets with your Git repositories easily via LastPass.
+## The build tool that let's you create, share and import secrets with your Git repositories easily via LastPass.
+[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
 The LastPass CLI needs to be installed. 
 See its [GitHub page](https://github.com/lastpass/lastpass-cli) for details on installing it.
