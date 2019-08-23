@@ -1,4 +1,4 @@
-![hamr](https://raw.githubusercontent.com/sportradar/hamr/master/hamr-logo.png?sanitize=true)
+![hamr](https://raw.githubusercontent.com/sportradar/hamr/how-to/hamr-logo.png)
 # hamr
 The build tool that let's you create, share and import secrets with your Git repositories easily via LastPass.
 
