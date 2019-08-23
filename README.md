@@ -2,8 +2,21 @@
 ## The build tool that let's you create, share and import secrets with your Git repositories easily via LastPass.
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
+
+## Installation
+The tool is in its early stages, so it has not been released to any official package managers yet.
+If you want to try it out follow the instructions below. 
+
 The LastPass CLI needs to be installed. 
 See its [GitHub page](https://github.com/lastpass/lastpass-cli) for details on installing it.
+
+Cargo needs to be installed. 
+See how to install Rust and Cargo on the language's [offical site](https://www.rust-lang.org/tools/install).
+
+After the LastPass CLI and Cargo is installed, you can install `hamr`:
+1. Clone/download the project.
+2. Change directory to the project's root folder `cd hamr`
+3. Run `cargo install --path . --force`.
 
 ## Usage
 
