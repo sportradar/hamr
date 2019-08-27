@@ -5,10 +5,7 @@ mod loader;
 mod time;
 
 use structopt::StructOpt;
-use failure::ResultExt;
-use exitfailure::ExitFailure;
 use std::path::PathBuf;
-use std::io::Write;
 
 #[derive(StructOpt)]
 #[structopt(name = "hamr", rename_all = "kebab-case",

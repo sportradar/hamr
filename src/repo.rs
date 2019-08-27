@@ -1,8 +1,6 @@
 use ini::Ini;
 use std::process::{Command, Stdio};
-use crate::shellout::LPassError;
 use std::path::PathBuf;
-use std::env::current_dir;
 
 pub fn get_origin() -> Result<String, String> {
     match std::env::current_dir() {
@@ -58,17 +56,17 @@ pub fn git_clone(repository: &str, folder: &Option<String>) -> Result<PathBuf, S
     args.push("clone");
     args.push(repository);
 
-    let mut folderBuf = String::with_capacity(64);
+    let mut folder_buf = String::with_capacity(64);
     let path = if let Some(folder) = folder {
-        folderBuf.push_str(&folder);
-        args.push(&folderBuf);
+        folder_buf.push_str(&folder);
+        args.push(&folder_buf);
 
         std::env::current_dir().unwrap().join(folder.clone())
     } else {
         let folder = get_folder_from_path(repository);
 
-        folderBuf.push_str(&folder);
-        args.push(&folderBuf);
+        folder_buf.push_str(&folder);
+        args.push(&folder_buf);
 
         std::env::current_dir().unwrap().join(folder.clone())
     };
