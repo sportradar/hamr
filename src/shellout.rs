@@ -12,13 +12,13 @@ fn exec_lpass(args: &[&str]) -> Result<String, LPassError> {
                 Ok(out) => Ok(out),
                 Err(err) => Err(LPassError::new("Could not parse stdout as valid utf8", Some(Box::from(err)))),
             }
-        },
+        }
         Err(err) => Err(LPassError::new("Could not exec command", Some(Box::from(err)))),
     }
 }
 
 fn exec_lpass_input(args: &[&str], data: &str) -> Result<String, LPassError> {
-    let mut child = Command::new("lpass").args(args.iter()).stdin(Stdio::piped()).spawn();
+    let child = Command::new("lpass").args(args.iter()).stdin(Stdio::piped()).spawn();
     if let Err(err) = child {
         return Err(LPassError::new("Could not exec command", Some(Box::from(err))));
     }
@@ -32,7 +32,7 @@ fn exec_lpass_input(args: &[&str], data: &str) -> Result<String, LPassError> {
                 Ok(out) => Ok(out),
                 Err(err) => Err(LPassError::new("Could not parse stdout as valid utf8", Some(Box::from(err)))),
             }
-        },
+        }
         Err(err) => Err(LPassError::new("Could not exec command", Some(Box::from(err))))
     }
 }
@@ -45,7 +45,7 @@ fn exec_lpass_no_output(args: &[&str]) -> Result<(), LPassError> {
 }
 
 pub fn save_data(name: &str, data: &str) -> Result<(), LPassError> {
-    let mut note_data= String::with_capacity(1024);
+    let mut note_data = String::with_capacity(1024);
     note_data.push_str("HamrData: ");
     note_data.push_str(data);
 
@@ -58,9 +58,9 @@ pub fn load_data(name: &str) -> Result<String, LPassError> {
     let mut output = exec_lpass(&["show", name])?;
 
     // Remove the header line.
-    if let Some((i, _)) = output.chars().enumerate().find(|(i, s)| *s == '\n') {
+    if let Some((i, _)) = output.chars().enumerate().find(|(_, s)| *s == '\n') {
         if output.len() > i + 1 {
-            output.drain(..i+1);
+            output.drain(..i + 1);
         } else {
             output.clear();
         }
@@ -90,7 +90,7 @@ pub fn ls() -> Result<Vec<LSEntry>, LPassError> {
 
     for line in stdout.lines() {
         let mut tokens = line.split(" [id: ");
-        let mut current = LSEntry{name: String::new(), folders: Vec::with_capacity(2), id: 0};
+        let mut current = LSEntry { name: String::new(), folders: Vec::with_capacity(2), id: 0 };
 
         if let Some(name) = tokens.next() {
             for path_token in name.split('/') {
@@ -102,24 +102,24 @@ pub fn ls() -> Result<Vec<LSEntry>, LPassError> {
                 }
             }
         } else {
-            return Err(LPassError::new(&format!("Invalid line: {}", line), None))
+            return Err(LPassError::new(&format!("Invalid line: {}", line), None));
         }
 
         if let Some(id_str) = tokens.next() {
             if id_str.len() <= 1 {
-                return Err(LPassError::new(&format!("No id in line: {}", line), None))
+                return Err(LPassError::new(&format!("No id in line: {}", line), None));
             }
 
             let without_brackets = &id_str[0..id_str.len() - 1];
 
             match without_brackets.parse::<u64>() {
-                Ok(n) => {current.id = n;},
+                Ok(n) => { current.id = n; }
                 Err(err) => {
-                    return Err(LPassError::new(&format!("Invalid id in line: {}", line), Some(Box::new(err))))
-                },
+                    return Err(LPassError::new(&format!("Invalid id in line: {}", line), Some(Box::new(err))));
+                }
             }
         } else {
-            return Err(LPassError::new(&format!("No id in line: {}", line), None))
+            return Err(LPassError::new(&format!("No id in line: {}", line), None));
         }
 
         result.push(current);
@@ -138,13 +138,13 @@ pub fn find_note(repo: &str) -> Result<Option<LSEntry>, LPassError> {
 /// Don't think too hard about what goes on in this function.
 pub fn note_name(repo: &str) -> String {
     let mut repo: String = repo.replace("git+ssh://", "")
-                               .replace("https://", "")
-                               .replace("/", " ")
-                               .replace(":", " ")
-                               .split('@')
-                               .last()
-                               .unwrap_or("")
-                               .to_owned();
+        .replace("https://", "")
+        .replace("/", " ")
+        .replace(":", " ")
+        .split('@')
+        .last()
+        .unwrap_or("")
+        .to_owned();
 
     if repo.ends_with(".git") {
         repo.drain(repo.len() - 4..);
@@ -166,23 +166,17 @@ impl LSEntry {
 
         load_data(&id)
     }
-
-    pub fn overwrite(&self, data: &str) -> Result<(), LPassError> {
-        let id = self.id.to_string();
-
-        save_data(&id, data)
-    }
 }
 
 #[derive(Debug)]
-pub struct LPassError{
+pub struct LPassError {
     msg: String,
     cause: Option<Box<Error>>,
 }
 
 impl LPassError {
     fn new(msg: &str, e: Option<Box<Error>>) -> LPassError {
-        LPassError{msg: String::from(msg), cause: e}
+        LPassError { msg: String::from(msg), cause: e }
     }
 }
 

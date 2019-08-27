@@ -2,8 +2,7 @@ use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
 use std::path::PathBuf;
 use std::fs::File;
-use std::io::{Read, BufReader, BufRead};
-use core::borrow::{BorrowMut, Borrow};
+use std::io::{BufReader, BufRead};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Note {
