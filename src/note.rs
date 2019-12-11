@@ -41,11 +41,7 @@ fn parse_files(paths: Vec<PathBuf>) -> Vec<ConfigFile> {
     for p in paths.iter() {
         let file = File::open(p).unwrap();
         let reader = BufReader::new(file);
-        let mut lines = Vec::new();
-        for line in reader.lines() {
-            let s = line.unwrap();
-            lines.push(s);
-        }
+        let lines = reader.lines().map(|l| l.unwrap()).collect();
         let config = ConfigFile { path: PathBuf::from(p), secrets: lines };
         configs.push(config);
     }

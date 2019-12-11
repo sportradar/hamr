@@ -3,35 +3,28 @@ use std::process::{Command, Stdio};
 use std::path::PathBuf;
 
 pub fn get_origin() -> Result<String, String> {
-    match std::env::current_dir() {
-        Ok(dir) => {
-            let git_path = dir.join(".git/config");
+    let dir = match std::env::current_dir() {
+        Ok(d) => d,
+        Err(e) => { return Err(format!("Could not find current dir: {}", e)); }
+    };
+    let git_path = dir.join(".git/config");
 
-            match Ini::load_from_file(git_path) {
-                Ok(file) => {
-                    for (sec, prop) in file.iter() {
-                        if let Some(sec) = sec {
-                            if sec != "remote \"origin\"" {
-                                continue;
-                            }
+    let file = match Ini::load_from_file(git_path) {
+        Ok(fi) => fi,
+        Err(e) => { return Err(format!("Could not load .git/config: {}", e)); }
+    };
 
-                            if let Some(value) = prop.get("url") {
-                                return Ok(value.clone());
-                            } else {
-                                return Err("No url found in master".to_owned())
-                            }
-                        }
-                    }
-
-                    Err("Could not find origin path in .git/config".to_owned())
-                }
-                Err(err) => Err(format!("Could not load .git/config: {}", err))
+    for (sec, prop) in file.iter() {
+        if let Some(sec) = sec {
+            if sec == "remote \"origin\"" {
+                return match prop.get("url") {
+                    Some(value) => Ok(value.to_string()),
+                    None => Err(String::from("No url found in master"))
+                };
             }
-        },
-        Err(err) => {
-            Err(format!("Could not find current dir: {}", err))
-        },
+        }
     }
+    Err(String::from("Could not find origin path in .git/config"))
 }
 
 fn get_folder_from_path(path: &str) -> String {
