@@ -25,7 +25,7 @@ fn exec_lpass_input(args: &[&str], data: &str) -> Result<String, LPassError> {
     let mut child = child.unwrap();
 
     if let Err(err) = child.stdin.as_mut().unwrap().write_all(data.as_bytes()) {
-        return Err(LPassError::new("Could write data", Some(Box::from(err))));
+        return Err(LPassError::new("Could not write data", Some(Box::from(err))));
     }
 
     match child.wait_with_output() {
