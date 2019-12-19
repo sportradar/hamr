@@ -24,7 +24,9 @@ fn exec_lpass_input(args: &[&str], data: &str) -> Result<String, LPassError> {
     }
     let mut child = child.unwrap();
 
-    child.stdin.as_mut().unwrap().write_all(data.as_bytes());
+    if let Err(err) = child.stdin.as_mut().unwrap().write_all(data.as_bytes()) {
+        return Err(LPassError::new("Could not write data", Some(Box::from(err))));
+    }
 
     match child.wait_with_output() {
         Ok(out) => {
@@ -58,13 +60,10 @@ pub fn load_data(name: &str) -> Result<String, LPassError> {
     let mut output = exec_lpass(&["show", name])?;
 
     // Remove the header line.
-    if let Some((i, _)) = output.chars().enumerate().find(|(_, s)| *s == '\n') {
-        if output.len() > i + 1 {
-            output.drain(..i + 1);
-        } else {
-            output.clear();
-        }
-    }
+    output = match output.find('\n') {
+        Some(pos) => String::from( &output[pos+1..] ),
+        None      => String::from( "" )
+    };
 
     // Clean it up.
     if output.starts_with("HamrData: ") {
@@ -171,11 +170,11 @@ impl LSEntry {
 #[derive(Debug)]
 pub struct LPassError {
     msg: String,
-    cause: Option<Box<Error>>,
+    cause: Option<Box<dyn Error>>,
 }
 
 impl LPassError {
-    fn new(msg: &str, e: Option<Box<Error>>) -> LPassError {
+    fn new(msg: &str, e: Option<Box<dyn Error>>) -> LPassError {
         LPassError { msg: String::from(msg), cause: e }
     }
 }
